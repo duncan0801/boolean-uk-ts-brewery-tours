@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import React from "react";
 
 import ListContainer from "./ListContainer";
@@ -7,32 +7,32 @@ import FilterContainer from "./FilterContainer";
 type BreweriesSerachProps = {
 	searchInput: string;
 };
-// type EventTarget = {
-// 	name: string;
-// 	value: string;
-// 	checked: boolean;
-// 	type: boolean;
-// };
+type filterType = {
+    selectedCities: [];
+	selectedType: string;
+	
+}
 
 export default function BreweriesSearch({ searchInput }: BreweriesSerachProps) {
 	const [cities, setCities] = useState<string[]>([]);
-	const [filters, setFilters] = useState<{
-        selectedCities: []
-        selectedType: string
-    }>({
+	const [filters, setFilters] = useState<filterType>
+		({
 		selectedCities: [],
 		selectedType: "",
 	});
 
-	const updateFilters = (e: Event) => {
-		let { name, value, checked, type } = e.target;
+	const updateFilters = (e: SyntheticEvent) => {
+		let { name, value, checked, type } = e.target as HTMLInputElement;
 
-		if (type === "checkbox")
-			value = checked
+		if (type === "checkbox") {
+			const newVal = checked
 				? [...filters.selectedCities, value]
 				: filters.selectedCities.filter((c) => c !== value);
 
-		setFilters({ ...filters, [name]: value });
+			setFilters({ ...filters, [name]: newVal });
+		} else {
+            setFilters({ ...filters, [name]: value });
+        }
 	};
 	return (
 		<main className="main-search">

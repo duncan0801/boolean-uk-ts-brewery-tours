@@ -1,12 +1,12 @@
 import { useState } from "react";
 import React from "react";
-
+type booleanFunction = (bool: boolean) => boolean;
 type HeaderProps = {
-    submitForm: (arg: string) => void
-    setShowBookings: (arg: boolean) => void
+	submitForm: (input: string) => void;
+	setShowBookings: (booleanFunction: booleanFunction | boolean) => void;
 };
 
-export default function Header({ submitForm, setShowBookings }: HeaderProps) {
+function Header({ submitForm, setShowBookings }: HeaderProps) {
 	const [input, setInput] = useState("");
 
 	return (
@@ -32,10 +32,12 @@ export default function Header({ submitForm, setShowBookings }: HeaderProps) {
 						type="text"
 					/>
 				</form>
-				{/* <button onClick={() => setShowBookings(curr => !curr)}>
-          Show bookings
-        </button> */}
+				<button onClick={() => setShowBookings((curr) => !curr)}>
+					Show bookings
+				</button>
 			</section>
 		</header>
 	);
 }
+
+export default Header;

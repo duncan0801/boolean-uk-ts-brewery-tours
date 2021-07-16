@@ -1,22 +1,27 @@
 import { useState } from "react";
 import React from "react";
 import BreweriesListItem from "./BreweriesListItem";
+import { Brewery } from "./ListContainer";
 
-export default function BreweriesList({ breweries }) {
-  const [openForm, setOpenForm] = useState(false);
+type BreweriesListProps = {
+    breweries: Brewery
+}
 
-  return (
-    <article>
-      <ul className="breweries-list">
-        {breweries.map(brewery => (
-          <BreweriesListItem
-            key={brewery.id}
-            brewery={brewery}
-            setOpenForm={setOpenForm}
-            isFormOpen={brewery.id === openForm}
-          />
-        ))}
-      </ul>
-    </article>
-  );
+export default function BreweriesList({ breweries }: BreweriesListProps) {
+	const [openForm, setOpenForm] = useState<number | null>(null);
+
+	return (
+		<article>
+			<ul className="breweries-list">
+				{breweries.map((brewery) => (
+					<BreweriesListItem
+						key={brewery.id}
+						brewery={brewery}
+						setOpenForm={setOpenForm}
+						isFormOpen={brewery.id === openForm}
+					/>
+				))}
+			</ul>
+		</article>
+	);
 }

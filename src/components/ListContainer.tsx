@@ -1,9 +1,34 @@
 import { useState, useEffect } from "react";
 import React from "react";
-
 import { getBreweriesByState } from "../breweryDbClient";
-
 import BreweriesList from "./BreweriesList";
+
+type ListContainerProps = {
+	stateInput: string;
+	setCities: (cities: string[]) => void;
+	filters: { selectedCities: string[]; selectedType: string };
+};
+
+export type Brewery = {
+	id: number;
+	obdb_id: string;
+	name: string;
+	brewery_type: string;
+	street: string;
+	address_2: string | null;
+	address_3: string | null;
+	city: string | null;
+	state: string | null;
+	county_province: string | null;
+	postal_code: string | null;
+	country: string | null;
+	longitude: string | null;
+	latitude: string | null;
+	phone: string | null;
+	website_url: string | null;
+	updated_at: string | null;
+	created_at: string | null;
+};
 
 const parseData = (allBreweries: Brewery[]) =>
 	allBreweries.filter((brewery) =>
@@ -12,58 +37,36 @@ const parseData = (allBreweries: Brewery[]) =>
 
 const extractCities = (allBreweries: Brewery[]) =>
 	allBreweries.reduce(
-		(acc, brewery) =>
+		(acc: string[], brewery: Brewery) =>
 			acc.includes(brewery.city) ? acc : [...acc, brewery.city],
 		[]
-	);
-
-type ListContainerProps = {
-	stateInput: string;
-	setCities: string[];
-	filters: { selectedCities: string[]; selectedType: string };
-};
-
-type Brewery = {
-	id: number;
-	obdb_id?: string;
-	name?: string;
-	brewery_type?: string;
-	street?: string;
-	address_2?: string | null;
-	address_3?: string | null;
-	city?: string | null;
-	state?: string | null;
-	county_province?: string | null;
-	postal_code?: string | null;
-	country?: string | null;
-	longitude?: string | null;
-	latitude?: string | null;
-	phone?: string | null;
-	website_url?: string | null;
-	updated_at?: string | null;
-	created_at?: string | null;
-};
+	); //TODO
 
 export default function ListContainer({
 	stateInput,
 	setCities,
 	filters: { selectedCities, selectedType },
 }: ListContainerProps) {
-	const [breweries, setBreweries] = useState([]);
+	const [breweries, setBreweries] = useState<Brewery[]>([]);
 	const [searchInput, setSearchInput] = useState("");
 
-	const applyFilters = (allBreweries: Brewery[]) => allBreweries.filter(isSelected);
+	const applyFilters = (allBreweries: Brewery[]) =>
+		allBreweries.filter(isSelected);
 
-	const isSelected = ({ city, brewery_type, name }) => {
+	const isSelected = ({ city, brewery_type, name }: Brewery) => {
 		const lowerCasedInput = searchInput.toLowerCase();
-		return (
-			(selectedType ? selectedType === brewery_type : true) &&
-			(selectedCities.length ? selectedCities.includes(city) : true) &&
-			(searchInput
-				? city.toLowerCase().includes(lowerCasedInput) ||
-				  name.toLowerCase().includes(lowerCasedInput)
-				: true)
-		);
+		if (city) {
+			return (
+				(selectedType ? selectedType === brewery_type : true) &&
+				(selectedCities.length
+					? selectedCities.includes(city)
+					: true) &&
+				(searchInput
+					? city.toLowerCase().includes(lowerCasedInput) ||
+					  name.toLowerCase().includes(lowerCasedInput)
+					: true)
+			);
+		}
 	};
 
 	useEffect(() => {
@@ -71,7 +74,7 @@ export default function ListContainer({
 			getBreweriesByState(stateInput).then((data) => {
 				const breweries = parseData(data);
 				setBreweries(breweries);
-				setCities(extractCities(breweries));
+				setCities(extractCities(breweries)); //TODO
 			});
 	}, [stateInput]);
 
